@@ -1,0 +1,233 @@
+/**
+* Guild Wars 2 Trade Post Functions using GW2 API V2
+* simple functions to grab item properties and values
+* applicable to Google Doc spreadsheets
+*
+* @author  Venguard.2640 Yak's Bend
+* @version 1.0
+* @since   2019-11-11 
+* 
+* HOW TO FIND ITEM ID:
+* To find the item ID, which can be found at:
+*      https://www.gw2bltc.com/
+*      https://www.gw2spidy.com/
+*      https://wiki.guildwars2.com/
+* Enter the name of the item you are looking for and find it's page
+* There will be an item code in the URL which can be used in the functions
+* Alternatively, the wiki has external links to the mentioned 
+* websites and even the API webpage where you can find the Item ID
+*/
+
+/* ---------- URL STRING BUILDER FUNCTIONS ---------- */
+
+/**
+* This is the method used to get the correct item URL that contains properties
+* @param itemID the itemID, obtained from the GW2API
+* @return item URL, contains all item properties
+*/
+function buildPropertiesURL(itemID){
+ var  url = "https://api.guildwars2.com/v2/items/" + itemID;
+ return (url);
+}
+
+/**
+* This is the method used to get the correct item URL that contains current trade post listings
+* @param itemID the itemID, obtained from the GW2API
+* @return item URL, contains item listings (buy orders and sell orders)
+*/
+function buildValueURL(itemID){
+ var  url = "https://api.guildwars2.com/v2/commerce/prices/" + itemID;
+ return (url);
+}
+
+/**
+* This is the method used to get the correct item URL that contains current trade post listings
+* @param itemID the itemID, obtained from the GW2API
+* @return item URL, contains item listings (buy orders and sell orders)
+*/
+function buildListingURL(itemID){
+ var  url = "https://api.guildwars2.com/v2/commerce/listings/" + itemID;
+ return (url);
+}
+
+/* ---------- ITEM PROPERTY FUNCTIONS ---------- */
+
+/**
+* This is the method used to get the item name
+* @param itemID the itemID, obtained from the GW2API
+* @return the item name, ie. 'Ghastly Grinning Shield Skin'
+*/
+function getName(itemID){
+  var response = UrlFetchApp.fetch(buildPropertiesURL(itemID));
+  var json = response.getContentText();
+  var data = JSON.parse(json);
+  return (data.name);
+}
+
+/**
+* This is the method used to get the item rarity
+* @param itemID the itemID, obtained from the GW2API
+* @return the item rarity, ie. 'Masterwork'
+*/
+function getRarity(itemID){
+  var response = UrlFetchApp.fetch(buildPropertiesURL(itemID));
+  var json = response.getContentText();
+  var data = JSON.parse(json);
+  return (data.rarity);
+}
+
+/**
+* This is the method used to get the item vendor value
+* @param itemID the itemID, obtained from the GW2API
+* @return the item vendor value, ie. '296' --> 2s96c
+*/
+function getVendorValue(itemID){
+  var response = UrlFetchApp.fetch(buildPropertiesURL(itemID));
+  var json = response.getContentText();
+  var data = JSON.parse(json);
+  return (data.vendor_value);
+}
+
+/**
+* This is the method used to get the item chat link
+* @param itemID the itemID, obtained from the GW2API
+* @return the item chat link, ie. [&AgHzjQAA] 
+*/
+function getChatLink(itemID){
+  var response = UrlFetchApp.fetch(buildPropertiesURL(itemID));
+  var json = response.getContentText();
+  var data = JSON.parse(json);
+  return (data.chat_link);
+}
+
+/**
+* This is the method used to get the item category
+* @param itemID the itemID, obtained from the GW2API
+* @return the item category, ie. 'UpgradeComponent'
+*/
+function getCategory(itemID){
+  var response = UrlFetchApp.fetch(buildPropertiesURL(itemID));
+  var json = response.getContentText();
+  var data = JSON.parse(json);
+  return (data.type);
+}
+
+/**
+* This is the method used to get the item category type, only certain item categories have this property
+* This array represents the categories of items that contain further classification
+* For example, UpgradeComponent can be further broken down in to 'Rune' or 'Sigil'
+* Something like a Trophy category does not have further classification
+* @param itemID the itemID, obtained from the GW2API
+* @return the item category type, ie. 'Rune'
+*/
+function getType(itemID){
+  var response = UrlFetchApp.fetch(buildPropertiesURL(itemID));
+  var json = response.getContentText();
+  var data = JSON.parse(json);
+  var hasDetailsType = ["Armor","Consumable","Container","Gathering","Gizmo","Tool","Trinket","UpgradeComponent","Weapon"];
+  var isPresent = hasDetailsType.indexOf(getCategory(itemID));
+  
+  if(isPresent > 0){
+    return (data.details.type);
+  }
+  else {
+    return ("NULL");
+  }
+}
+
+/* ---------- TRADE POST ECONOMIC FUNCTIONS ---------- */
+/**
+* This is the method used to get the current buy order/ sell order price of an item
+* @param itemID the itemID, obtained from the GW2API
+* @param specifier second parameter to identify whether you want the 'buy' or 'sell' value
+* @return the item buy/sell value, ie. '789000' --> 78g90s00c
+*/
+function getValue(itemID, specifier){
+  var type = specifier.toLowerCase();
+  var response = UrlFetchApp.fetch(buildValueURL(itemID));
+  var json = response.getContentText();
+  var data = JSON.parse(json);
+  
+  if (type == "buy" || type == "b"){ 
+    return (data.buys.unit_price);
+  }
+  else if (type == "sell" || type == "s"){
+    return (data.sells.unit_price);
+  }
+  else{
+    return ("'buy' or 'sell' parameter not specified");
+  }
+}
+
+/**
+* This is the method used to get the number of buy/sell orders for an item
+* @param itemID the itemID, obtained from the GW2API
+* @param specifier second parameter to identify whether you want the 'buy' or 'sell' order values
+* @return the number of buy/sell orders, ie. 35
+*/
+function getListingQuantity(itemID, specifier){
+  var type = specifier.toLowerCase();
+  var response = UrlFetchApp.fetch(buildValueURL(itemID));
+  var json = response.getContentText();
+  var data = JSON.parse(json);
+  
+  if (type == "buy" || type == "b"){ 
+    return (data.buys.quantity);
+  }
+  else if (type == "sell" || type == "s"){ 
+    return (data.sells.quantity);
+  }
+  else{
+    return ("'buy' or 'sell' parameter not specified");
+  }
+}
+
+/**
+* This is the method used to get the average buy/sell price in a given window of listings (num)
+* @param itemID the itemID, obtained from the GW2API
+* @param specifier second parameter to identify whether you want the 'buy' or 'sell' order values
+* @return the average price of the item in the given window, ie. percentage = 0.1 --> gives the average price in the most recent 10% of listings
+*/
+function getAveragePrice(itemID, specifier){
+  var type = specifier.toLowerCase();
+  var response = UrlFetchApp.fetch(buildListingURL(itemID));
+  var json = response.getContentText();
+  var data = JSON.parse(json);
+  var upperPercent = 0;
+  var percentage = 0.10;
+  var total = 0;
+  
+  if (type == "buy" || type == "b"){
+    for (var i in data.buys){
+      upperPercent++;
+    }
+    if (upperPercent * percentage > 0 && upperPercent * percentage < 1){
+      upperPercent = 1;
+    }
+    else {
+      upperPercent = parseInt(upperPercent * percentage);
+    }
+    for (var i = 0; i < upperPercent; i++){
+      total += data.buys[i].unit_price;
+    }
+    return (total/upperPercent);
+  }
+  else if (type == "sell" || type == "s"){
+    for (var i in data.sells){
+      upperPercent++;
+    }
+    if (upperPercent * percentage > 0 && upperPercent * percentage < 1){
+      upperPercent = 1;
+    }
+    else {
+      upperPercent = parseInt(upperPercent * percentage);
+    }
+    for (var i = 0; i < upperPercent; i++){
+      total += data.sells[i].unit_price;
+    }
+    return (total/upperPercent);
+  }
+  else{
+    return ("'buy' or 'sell' parameter not specified");
+  }
+}
