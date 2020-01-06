@@ -1,7 +1,15 @@
 # GWTPFunctions
 Google Sheet functions for pulling item and trade post information from public Guild Wars 2 APIs
+<hr>
+<h3>HOW TO</h3>
 
-**The functions require you to provide the itemID which can be found on gw2bltc.com, wiki.guildwars2.com, gwspidy.com or any other resource
+  - Create a Google Sheet spreadsheet
+  - On the top toolbar click Tools>Script Editor
+  - Copy the contents of the Functions file into the Code.gs 
+  - Implement the functions in your spreadsheets to your desire
+<hr>
+
+The functions require you to provide the itemID which can be found on gw2bltc.com, wiki.guildwars2.com, gwspidy.com or any other resource
 Functions that are included in the code:
   - Get the name of an item
   - Get the rarity of an item
