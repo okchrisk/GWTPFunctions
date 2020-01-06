@@ -19,8 +19,8 @@ Functions that are included in the code:
 These functions will allow for personal record keeping of in-game investments, statistics and calculations
 
 NOTE: the getValue, getListingQuantity, getAveragePrice have a second parameter which specifies if you want the buy or sell orders
-      ie. If you are pulling information for Bolyt (itemID: 30699)
-
+      
+        ie. If you are pulling information for Bolt (itemID: 30699)
         getValue(30699, "b") --> returns 21000000 (2100g00s00c)
         getValue(30699, "s") --> returns 23449999 (2344g99s99c) Pre 15% Tax
       
