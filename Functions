@@ -183,7 +183,7 @@ function getListingQuantity(itemID, specifier){
 }
 
 /**
-* This is the method used to get the average buy/sell price in a given window of listings (num)
+* This is the method used to get the average buy/sell price in a given window of listings (percentage)
 * @param itemID the itemID, obtained from the GW2API
 * @param specifier second parameter to identify whether you want the 'buy' or 'sell' order values
 * @return the average price of the item in the given window, ie. percentage = 0.1 --> gives the average price in the most recent 10% of listings
@@ -194,8 +194,10 @@ function getAveragePrice(itemID, specifier){
   var json = response.getContentText();
   var data = JSON.parse(json);
   var upperPercent = 0;
-  var percentage = 0.10;
   var total = 0;
+  
+  // change this to calculate from a different range (ie. 0.5 --> calculate for 50% of the current listings)
+  var percentage = 0.10;
   
   if (type == "buy" || type == "b"){
     for (var i in data.buys){
