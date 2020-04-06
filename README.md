@@ -89,7 +89,7 @@ shows
     <td><b>Average Sell Price (top 10%)</b></td>
   </tr>
   <tr>
-<td>1</td>
+<td>2</td>
     <td>30689</td>
     <td>Eternity</td>
     <td>[&AgHhdwAA]</td>
